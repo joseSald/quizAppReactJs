@@ -8,6 +8,7 @@ const Quiz = () => {
   let [question, setQuestion] = useState(data[index])
   let [lock, setLock] = useState(false)
   let [score, setScore] = useState(0)
+  let [result, setResult] = useState(false)
 
   let option1 = useRef(null)
   let option2 = useRef(null)
@@ -20,7 +21,7 @@ const Quiz = () => {
     if (lock === false){
     question.ans === ans ? e.target.classList.add('correct') &
     setLock(true) &
-    setScore(prev=>prev++)
+    setScore(prev=>++prev)
     :    
     e.target.classList.add('incorrect') &
     setLock(true)    
@@ -30,6 +31,10 @@ const Quiz = () => {
 
   const next = ()=>{
     if (lock){
+      if(index === data.length -1){
+        setResult(true)
+        return 0 
+      }
       setIndex(++index)
       setQuestion(data[index])
       setLock(false)
@@ -41,11 +46,19 @@ const Quiz = () => {
     }
 
   }
+  const reset = ()=>{
+    setIndex(0)
+    setQuestion(data[0])
+    setScore(0)
+    setLock(false)
+    setResult(false)
+  }
 
   return (
     <div className='container'>
       <h1>Quiz App</h1>
       <hr />
+      {result?<></>:<>
       <h2>{index+1}.{question.question}</h2>
       <ul>
         <li ref={option1}  onClick={(e)=>{checkAnswer(e,1)}} >{question.option1}</li>
@@ -55,6 +68,11 @@ const Quiz = () => {
       </ul>
       <button onClick={next}>Next</button>
     <div className="questionIndex"> question {index+1}/{data.length}</div>  
+      </>}
+      {result?<>
+        <h2>You scored {score} out of {data.length}</h2>
+        <button onClick={reset}>Reset</button>
+      </>:<></>}
     </div>
   )
 }
